@@ -2,10 +2,7 @@ package com.bruna.gamelib.controller;
 
 import com.bruna.gamelib.entity.Jogo;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +25,17 @@ public class JogoController {
     @GetMapping("/jogo")
     public Jogo buscarJogo() {
         return listaJogos.getFirst();
+    }
+
+    @GetMapping("/jogo/{id}")
+    public ResponseEntity<Jogo> buscarJogoPorId(@PathVariable Long id) {
+        for (Jogo jogo : listaJogos) {
+            if (jogo.getId().equals(id)) {
+                return ResponseEntity.ok(jogo);
+            }
+        }
+
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/jogos")
