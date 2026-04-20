@@ -21,7 +21,8 @@ public class Jogo {
     public Jogo() {
     }
 
-    public Jogo(String nome, String genero, String plataforma, String status, Boolean favorito) {
+    public Jogo(Long id, String nome, String genero, String plataforma, String status, Boolean favorito) {
+        this.id = id;
         this.nome = nome;
         this.genero = genero;
         this.plataforma = plataforma;
