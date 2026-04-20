@@ -48,4 +48,21 @@ public class JogoController {
         listaJogos.add(jogo);
         return ResponseEntity.status(201).body(jogo);
     }
+
+    @PutMapping("/jogo/{id}")
+    public ResponseEntity<Jogo> atualizarJogo(@PathVariable Long id, @RequestBody Jogo jogoAtualizado) {
+        for (Jogo jogo : listaJogos) {
+            if (jogo.getId().equals(id)) {
+                jogo.setNome(jogoAtualizado.getNome());
+                jogo.setGenero(jogoAtualizado.getGenero());
+                jogo.setPlataforma(jogoAtualizado.getPlataforma());
+                jogo.setStatus(jogoAtualizado.getStatus());
+                jogo.setFavorito(jogoAtualizado.getFavorito());
+
+                return ResponseEntity.ok(jogo);
+            }
+        }
+
+        return ResponseEntity.notFound().build();
+    }
 }
