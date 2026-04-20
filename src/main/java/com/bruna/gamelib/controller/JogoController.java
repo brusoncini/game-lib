@@ -65,4 +65,16 @@ public class JogoController {
 
         return ResponseEntity.notFound().build();
     }
+
+    @DeleteMapping("/jogo/{id}")
+    public ResponseEntity<String> deletarJogo(@PathVariable Long id) {
+        for (int i = 0; i < listaJogos.size(); i++) {
+            if (listaJogos.get(i).getId().equals(id)) {
+                listaJogos.remove(i);
+                return ResponseEntity.ok("Jogo removido com sucesso");
+            }
+        }
+
+        return ResponseEntity.notFound().build();
+    }
 }
