@@ -2,13 +2,11 @@ package com.bruna.gamelib.controller;
 
 import com.bruna.gamelib.dto.JogoRawgDTO;
 import com.bruna.gamelib.entity.Jogo;
-import com.bruna.gamelib.repository.JogoRepository;
 import com.bruna.gamelib.service.JogoService;
 import com.bruna.gamelib.service.RawgService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -62,5 +60,16 @@ public class JogoController {
         }
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/externo/jogo/{id}")
+    public ResponseEntity<JogoRawgDTO> buscarJogoExternoPorId(@PathVariable Integer id) throws Exception {
+        JogoRawgDTO jogo = rawgService.buscarJogoPorId(id);
+
+        if (jogo == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(jogo);
     }
 }

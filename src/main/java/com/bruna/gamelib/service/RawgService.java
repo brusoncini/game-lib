@@ -13,7 +13,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -29,7 +28,6 @@ public class RawgService {
 
     public List<JogoRawgDTO> buscarJogosPorNome(String nome) throws Exception {
         String nomeCodificado = URLEncoder.encode(nome, StandardCharsets.UTF_8);
-
         String url = apiUrl + "/games?key=" + apiKey + "&search=" + nomeCodificado;
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -46,15 +44,7 @@ public class RawgService {
 
         if (resultados != null && resultados.isArray()) {
             for (JsonNode jogo : resultados) {
-                Integer id = jogo.get("id") != null ? jogo.get("id").asInt() : null;
-                String nomeJogo = jogo.get("name") != null ? jogo.get("name").asText() : null;
-                String dataLancamento = jogo.get("released") != null ? jogo.get("released").asText() : null;
-                Double nota = jogo.get("rating") != null ? jogo.get("rating").asDouble() : null;
-
-                String generos = montarGeneros(jogo.get("genres"));
-                String plataformas = montarPlataformas(jogo.get("platforms"));
-
-                lista.add(new JogoRawgDTO(id, nomeJogo, dataLancamento, nota, generos, plataformas));
+                lista.add(converterParaDTO(jogo));
             }
         }
 
@@ -62,7 +52,7 @@ public class RawgService {
     }
 
     private String montarGeneros(JsonNode generosNode) {
-        if (generosNode == null || !generosNode.isArray() || generosNode.size() == 0) {
+        if (generosNode == null || !generosNode.isArray() || generosNode.isEmpty()) {
             return "";
         }
 
@@ -83,7 +73,7 @@ public class RawgService {
     }
 
     private String montarPlataformas(JsonNode plataformasNode) {
-        if (plataformasNode == null || !plataformasNode.isArray() || plataformasNode.size() == 0) {
+        if (plataformasNode == null || !plataformasNode.isArray() || plataformasNode.isEmpty()) {
             return "";
         }
 
@@ -101,6 +91,37 @@ public class RawgService {
         }
 
         return plataformasTexto.toString();
+    }
+
+    private JogoRawgDTO converterParaDTO(JsonNode jogo) {
+        Integer id = jogo.get("id") != null ? jogo.get("id").asInt() : null;
+        String nomeJogo = jogo.get("name") != null ? jogo.get("name").asText() : null;
+        String dataLancamento = jogo.get("released") != null ? jogo.get("released").asText() : null;
+        Double nota = jogo.get("rating") != null ? jogo.get("rating").asDouble() : null;
+
+        String generos = montarGeneros(jogo.get("genres"));
+        String plataformas = montarPlataformas(jogo.get("platforms"));
+
+        return new JogoRawgDTO(id, nomeJogo, dataLancamento, nota, generos, plataformas);
+    }
+
+    public JogoRawgDTO buscarJogoPorId(Integer id) throws Exception {
+        String url = apiUrl + "/games/" + id + "?key=" + apiKey;
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .GET()
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() == 404) {
+            return null;
+        }
+
+        JsonNode jogo = objectMapper.readTree(response.body());
+
+        return converterParaDTO(jogo);
     }
 
 }

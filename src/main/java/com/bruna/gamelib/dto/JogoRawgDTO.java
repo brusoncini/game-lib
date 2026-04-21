@@ -1,8 +1,5 @@
 package com.bruna.gamelib.dto;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class JogoRawgDTO {
 
     private Integer id;
