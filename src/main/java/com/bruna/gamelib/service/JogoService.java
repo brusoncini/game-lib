@@ -1,9 +1,11 @@
 package com.bruna.gamelib.service;
 
+import com.bruna.gamelib.dto.JogoRawgDTO;
 import com.bruna.gamelib.entity.Jogo;
 import com.bruna.gamelib.repository.JogoRepository;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,9 +13,11 @@ import java.util.Optional;
 public class JogoService {
 
     private final JogoRepository jogoRepository;
+    private final RawgService rawgService;
 
-    public JogoService(JogoRepository jogoRepository) {
+    public JogoService(JogoRepository jogoRepository, RawgService rawgService) {
         this.jogoRepository = jogoRepository;
+        this.rawgService = rawgService;
     }
 
     public List<Jogo> listarJogos() {
@@ -47,5 +51,20 @@ public class JogoService {
 
         jogoRepository.deleteById(id);
         return true;
+    }
+
+    public Jogo importarJogoDaRawg(Integer rawgId, String status, Boolean favorito) throws IOException, InterruptedException {
+        JogoRawgDTO jogoRawg = rawgService.buscarJogoPorId(rawgId);
+
+        Jogo jogo = new Jogo();
+
+        jogo.setNome(jogoRawg.getNome());
+        jogo.setGenero(jogoRawg.getGeneros());
+        jogo.setPlataforma(jogoRawg.getPlataformas());
+
+        jogo.setStatus(status);
+        jogo.setFavorito(favorito);
+
+        return jogoRepository.save(jogo);
     }
 }
