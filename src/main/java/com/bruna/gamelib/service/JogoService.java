@@ -20,15 +20,15 @@ public class JogoService {
         return jogoRepository.findAll();
     }
 
-    public Optional<Jogo> buscarPorId(Long id) {
+    public Optional<Jogo> buscarJogoPorId(Long id) {
         return jogoRepository.findById(id);
     }
 
-    public Jogo salvar(Jogo jogo) {
+    public Jogo salvarJogo(Jogo jogo) {
         return jogoRepository.save(jogo);
     }
 
-    public Optional<Jogo> atualizar(Long id, Jogo jogoAtualizado) {
+    public Optional<Jogo> atualizarJogo(Long id, Jogo jogoAtualizado) {
         return jogoRepository.findById(id).map(jogo -> {
             jogo.setNome(jogoAtualizado.getNome());
             jogo.setGenero(jogoAtualizado.getGenero());
@@ -40,7 +40,7 @@ public class JogoService {
         });
     }
 
-    public boolean deletar(Long id) {
+    public boolean deletarJogo(Long id) {
         if (!jogoRepository.existsById(id)) {
             return false;
         }
@@ -48,5 +48,4 @@ public class JogoService {
         jogoRepository.deleteById(id);
         return true;
     }
-
 }

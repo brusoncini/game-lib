@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
@@ -105,7 +106,7 @@ public class RawgService {
         return new JogoRawgDTO(id, nomeJogo, dataLancamento, nota, generos, plataformas);
     }
 
-    public JogoRawgDTO buscarJogoPorId(Integer id) throws Exception {
+    public JogoRawgDTO buscarJogoPorId(Integer id) throws IOException, InterruptedException {
         String url = apiUrl + "/games/" + id + "?key=" + apiKey;
 
         HttpRequest request = HttpRequest.newBuilder()

@@ -1,75 +1,54 @@
 package com.bruna.gamelib.controller;
 
-import com.bruna.gamelib.dto.JogoRawgDTO;
 import com.bruna.gamelib.entity.Jogo;
 import com.bruna.gamelib.service.JogoService;
-import com.bruna.gamelib.service.RawgService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/jogos")
 public class JogoController {
 
-
     private final JogoService jogoService;
-    private final RawgService rawgService;
 
-    public JogoController(JogoService jogoService, RawgService rawgService) {
+    public JogoController(JogoService jogoService) {
         this.jogoService = jogoService;
-        this.rawgService = rawgService;
     }
 
-    @GetMapping("/jogos")
+    @GetMapping
     public List<Jogo> listarJogos() {
         return jogoService.listarJogos();
     }
 
-    @GetMapping("/externo/jogos")
-    public List<JogoRawgDTO> buscarJogosExternos(@RequestParam String nome) throws Exception {
-        return rawgService.buscarJogosPorNome(nome);
-    }
-
-    @GetMapping("/jogo/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Jogo> buscarJogoPorId(@PathVariable Long id) {
-        return jogoService.buscarPorId(id)
+        return jogoService.buscarJogoPorId(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping("/jogo")
-    public ResponseEntity<Jogo> cadastrarJogo(@RequestBody Jogo jogo) {
-        Jogo jogoSalvo = jogoService.salvar(jogo);
-        return ResponseEntity.status(201).body(jogoSalvo);
+    @PostMapping
+    public Jogo salvarJogo(@RequestBody Jogo jogo) {
+        return jogoService.salvarJogo(jogo);
     }
 
-    @PutMapping("/jogo/{id}")
-    public ResponseEntity<Jogo> atualizarJogo(@PathVariable Long id, @RequestBody Jogo jogoAtualizado) {
-        return jogoService.atualizar(id, jogoAtualizado)
+    @PutMapping("/{id}")
+    public ResponseEntity<Jogo> atualizarJogo(@PathVariable Long id, @RequestBody Jogo jogo) {
+        return jogoService.atualizarJogo(id, jogo)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/jogo/{id}")
-    public ResponseEntity<String> deletarJogo(@PathVariable Long id) {
-        boolean removido = jogoService.deletar(id);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletarJogo(@PathVariable Long id) {
+        boolean deletou = jogoService.deletarJogo(id);
 
-        if (!removido) {
-            return ResponseEntity.notFound().build();
+        if (deletou) {
+            return ResponseEntity.noContent().build();
         }
 
-        return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/externo/jogo/{id}")
-    public ResponseEntity<JogoRawgDTO> buscarJogoExternoPorId(@PathVariable Integer id) throws Exception {
-        JogoRawgDTO jogo = rawgService.buscarJogoPorId(id);
-
-        if (jogo == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.ok(jogo);
+        return ResponseEntity.notFound().build();
     }
 }

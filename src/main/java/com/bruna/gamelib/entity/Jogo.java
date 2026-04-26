@@ -34,7 +34,8 @@ public class Jogo {
         return id;
     }
 
-    public void setId(long l) {
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getNome() {
