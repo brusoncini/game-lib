@@ -19,8 +19,11 @@ public class JogoController {
     }
 
     @GetMapping
-    public List<Jogo> listarJogos() {
-        return jogoService.listarJogos();
+    public List<Jogo> listarJogos(
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) Boolean favorito
+    ) {
+        return jogoService.filtrarJogos(status, favorito);
     }
 
     @GetMapping("/{id}")

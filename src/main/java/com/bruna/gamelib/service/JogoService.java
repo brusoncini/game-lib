@@ -67,4 +67,20 @@ public class JogoService {
 
         return jogoRepository.save(jogo);
     }
+
+    public List<Jogo> filtrarJogos(String status, Boolean favorito) {
+        if (status != null && favorito != null) {
+            return jogoRepository.findByStatusAndFavorito(status, favorito);
+        }
+
+        if (status != null) {
+            return jogoRepository.findByStatus(status);
+        }
+
+        if (favorito != null) {
+            return jogoRepository.findByFavorito(favorito);
+        }
+
+        return jogoRepository.findAll();
+    }
 }
