@@ -13,10 +13,14 @@ public class Jogo {
     @Column(unique = true)
     private Integer rawgId;
 
+    @Column(length = 1000)
+    private String comentario;
+
     private String nome;
     private String genero;
     private String plataforma;
     private Boolean favorito;
+    private Integer notaPessoal;
 
     @Enumerated(EnumType.STRING)
     private StatusJogo status;
@@ -24,13 +28,17 @@ public class Jogo {
     public Jogo() {
     }
 
-    public Jogo(Long id, String nome, String genero, String plataforma, Boolean favorito, StatusJogo status) {
+    public Jogo(Long id, Integer rawgId, String nome, String genero, String plataforma,
+                Boolean favorito, StatusJogo status, Integer notaPessoal, String comentario) {
         this.id = id;
+        this.rawgId = rawgId;
         this.nome = nome;
         this.genero = genero;
         this.plataforma = plataforma;
         this.favorito = favorito;
         this.status = status;
+        this.notaPessoal = notaPessoal;
+        this.comentario = comentario;
     }
 
     public Long getId() {
@@ -47,6 +55,14 @@ public class Jogo {
 
     public void setRawgId(Integer rawgId) {
         this.rawgId = rawgId;
+    }
+
+    public String getComentario() {
+        return comentario;
+    }
+
+    public void setComentario(String comentario) {
+        this.comentario = comentario;
     }
 
     public String getNome() {
@@ -73,19 +89,27 @@ public class Jogo {
         this.plataforma = plataforma;
     }
 
-    public StatusJogo getStatus() {
-        return status;
-    }
-
-    public void setStatus(StatusJogo status) {
-        this.status = status;
-    }
-
     public Boolean getFavorito() {
         return favorito;
     }
 
     public void setFavorito(Boolean favorito) {
         this.favorito = favorito;
+    }
+
+    public Integer getNotaPessoal() {
+        return notaPessoal;
+    }
+
+    public void setNotaPessoal(Integer notaPessoal) {
+        this.notaPessoal = notaPessoal;
+    }
+
+    public StatusJogo getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusJogo status) {
+        this.status = status;
     }
 }

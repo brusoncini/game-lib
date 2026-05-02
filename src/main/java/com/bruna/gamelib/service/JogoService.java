@@ -1,9 +1,11 @@
 package com.bruna.gamelib.service;
 
+import com.bruna.gamelib.dto.AvaliacaoJogoDTO;
 import com.bruna.gamelib.dto.JogoRawgDTO;
 import com.bruna.gamelib.entity.Jogo;
 import com.bruna.gamelib.enums.StatusJogo;
 import com.bruna.gamelib.exception.JogoJaImportadoException;
+import com.bruna.gamelib.exception.NotaInvalidaException;
 import com.bruna.gamelib.repository.JogoRepository;
 import org.springframework.stereotype.Service;
 
@@ -104,6 +106,33 @@ public class JogoService {
     public Optional<Jogo> atualizarFavorito(Long id, Boolean favorito) {
         return jogoRepository.findById(id).map(jogo -> {
             jogo.setFavorito(favorito);
+            return jogoRepository.save(jogo);
+        });
+    }
+
+    private void validarNotaPessoal(Integer notaPessoal) {
+        if (notaPessoal == null) {
+            return;
+        }
+
+        if (notaPessoal < 0 || notaPessoal > 10) {
+            throw new NotaInvalidaException("A nota pessoal deve estar entre 0 e 10.");
+        }
+    }
+
+    public Optional<Jogo> atualizarAvaliacao(Long id, AvaliacaoJogoDTO avaliacao) {
+        validarNotaPessoal(avaliacao.getNotaPessoal());
+
+        return jogoRepository.findById(id).map(jogo -> {
+
+            if (avaliacao.getNotaPessoal() != null) {
+                jogo.setNotaPessoal(avaliacao.getNotaPessoal());
+            }
+
+            if (avaliacao.getComentario() != null) {
+                jogo.setComentario(avaliacao.getComentario());
+            }
+
             return jogoRepository.save(jogo);
         });
     }

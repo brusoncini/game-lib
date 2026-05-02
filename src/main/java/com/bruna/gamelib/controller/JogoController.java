@@ -1,5 +1,6 @@
 package com.bruna.gamelib.controller;
 
+import com.bruna.gamelib.dto.AvaliacaoJogoDTO;
 import com.bruna.gamelib.entity.Jogo;
 import com.bruna.gamelib.enums.StatusJogo;
 import com.bruna.gamelib.service.JogoService;
@@ -85,6 +86,16 @@ public class JogoController {
             @RequestParam Boolean favorito
     ) {
         return jogoService.atualizarFavorito(id, favorito)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PatchMapping("/{id}/avaliacao")
+    public ResponseEntity<Jogo> atualizarAvaliacao(
+            @PathVariable Long id,
+            @RequestBody AvaliacaoJogoDTO avaliacao
+    ) {
+        return jogoService.atualizarAvaliacao(id, avaliacao)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

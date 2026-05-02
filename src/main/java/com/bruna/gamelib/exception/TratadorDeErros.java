@@ -47,4 +47,15 @@ public class TratadorDeErros {
 
         return ResponseEntity.status(500).body(resposta);
     }
+
+    @ExceptionHandler(NotaInvalidaException.class)
+    public ResponseEntity<RespostaErro> tratarNotaInvalida(NotaInvalidaException erro) {
+        RespostaErro resposta = new RespostaErro(
+                400,
+                "Nota invalida",
+                erro.getMessage()
+        );
+
+        return ResponseEntity.badRequest().body(resposta);
+    }
 }
