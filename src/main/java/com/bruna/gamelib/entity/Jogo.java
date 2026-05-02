@@ -1,9 +1,7 @@
 package com.bruna.gamelib.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.bruna.gamelib.enums.StatusJogo;
+import jakarta.persistence.*;
 
 @Entity
 public class Jogo {
@@ -15,19 +13,21 @@ public class Jogo {
     private String nome;
     private String genero;
     private String plataforma;
-    private String status;
     private Boolean favorito;
+
+    @Enumerated(EnumType.STRING)
+    private StatusJogo status;
 
     public Jogo() {
     }
 
-    public Jogo(Long id, String nome, String genero, String plataforma, String status, Boolean favorito) {
+    public Jogo(Long id, String nome, String genero, String plataforma, Boolean favorito, StatusJogo status) {
         this.id = id;
         this.nome = nome;
         this.genero = genero;
         this.plataforma = plataforma;
-        this.status = status;
         this.favorito = favorito;
+        this.status = status;
     }
 
     public Long getId() {
@@ -62,11 +62,11 @@ public class Jogo {
         this.plataforma = plataforma;
     }
 
-    public String getStatus() {
+    public StatusJogo getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatusJogo status) {
         this.status = status;
     }
 

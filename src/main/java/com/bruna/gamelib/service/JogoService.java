@@ -2,6 +2,7 @@ package com.bruna.gamelib.service;
 
 import com.bruna.gamelib.dto.JogoRawgDTO;
 import com.bruna.gamelib.entity.Jogo;
+import com.bruna.gamelib.enums.StatusJogo;
 import com.bruna.gamelib.repository.JogoRepository;
 import org.springframework.stereotype.Service;
 
@@ -53,7 +54,7 @@ public class JogoService {
         return true;
     }
 
-    public Jogo importarJogoDaRawg(Integer rawgId, String status, Boolean favorito) throws IOException, InterruptedException {
+    public Jogo importarJogoDaRawg(Integer rawgId, StatusJogo status, Boolean favorito) throws IOException, InterruptedException {
         JogoRawgDTO jogoRawg = rawgService.buscarJogoPorId(rawgId);
 
         Jogo jogo = new Jogo();
@@ -61,14 +62,13 @@ public class JogoService {
         jogo.setNome(jogoRawg.getNome());
         jogo.setGenero(jogoRawg.getGeneros());
         jogo.setPlataforma(jogoRawg.getPlataformas());
-
         jogo.setStatus(status);
         jogo.setFavorito(favorito);
 
         return jogoRepository.save(jogo);
     }
 
-    public List<Jogo> filtrarJogos(String status, Boolean favorito) {
+    public List<Jogo> filtrarJogos(StatusJogo status, Boolean favorito) {
         if (status != null && favorito != null) {
             return jogoRepository.findByStatusAndFavorito(status, favorito);
         }
@@ -82,5 +82,19 @@ public class JogoService {
         }
 
         return jogoRepository.findAll();
+    }
+
+        public Optional<Jogo> atualizarStatus(Long id, StatusJogo status) {
+        return jogoRepository.findById(id).map(jogo -> {
+            jogo.setStatus(status);
+            return jogoRepository.save(jogo);
+        });
+    }
+
+    public Optional<Jogo> atualizarFavorito(Long id, Boolean favorito) {
+        return jogoRepository.findById(id).map(jogo -> {
+            jogo.setFavorito(favorito);
+            return jogoRepository.save(jogo);
+        });
     }
 }

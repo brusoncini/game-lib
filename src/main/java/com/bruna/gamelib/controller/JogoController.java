@@ -1,6 +1,7 @@
 package com.bruna.gamelib.controller;
 
 import com.bruna.gamelib.entity.Jogo;
+import com.bruna.gamelib.enums.StatusJogo;
 import com.bruna.gamelib.service.JogoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class JogoController {
 
     @GetMapping
     public List<Jogo> listarJogos(
-            @RequestParam(required = false) String status,
+            @RequestParam(required = false) StatusJogo status,
             @RequestParam(required = false) Boolean favorito
     ) {
         return jogoService.filtrarJogos(status, favorito);
@@ -59,9 +60,29 @@ public class JogoController {
     @PostMapping("/importar/{rawgId}")
     public Jogo importarJogoDaRawg(
             @PathVariable Integer rawgId,
-            @RequestParam(defaultValue = "QUERO_JOGAR") String status,
+            @RequestParam(defaultValue = "QUERO_JOGAR") StatusJogo status,
             @RequestParam(defaultValue = "false") Boolean favorito
     ) throws IOException, InterruptedException {
         return jogoService.importarJogoDaRawg(rawgId, status, favorito);
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<Jogo> atualizarStatus(
+            @PathVariable Long id,
+            @RequestParam StatusJogo status
+    ) {
+        return jogoService.atualizarStatus(id, status)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PatchMapping("/{id}/favorito")
+    public ResponseEntity<Jogo> atualizarFavorito(
+            @PathVariable Long id,
+            @RequestParam Boolean favorito
+    ) {
+        return jogoService.atualizarFavorito(id, favorito)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }
