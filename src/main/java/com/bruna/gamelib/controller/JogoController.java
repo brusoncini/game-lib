@@ -58,12 +58,15 @@ public class JogoController {
     }
 
     @PostMapping("/importar/{rawgId}")
-    public Jogo importarJogoDaRawg(
+    public ResponseEntity<Jogo> importarJogoDaRawg(
             @PathVariable Integer rawgId,
             @RequestParam(defaultValue = "QUERO_JOGAR") StatusJogo status,
             @RequestParam(defaultValue = "false") Boolean favorito
+
     ) throws IOException, InterruptedException {
-        return jogoService.importarJogoDaRawg(rawgId, status, favorito);
+        Jogo jogoImportado = jogoService.importarJogoDaRawg(rawgId, status, favorito);
+
+        return ResponseEntity.status(201).body(jogoImportado);
     }
 
     @PatchMapping("/{id}/status")

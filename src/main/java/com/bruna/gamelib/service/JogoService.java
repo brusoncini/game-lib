@@ -3,6 +3,7 @@ package com.bruna.gamelib.service;
 import com.bruna.gamelib.dto.JogoRawgDTO;
 import com.bruna.gamelib.entity.Jogo;
 import com.bruna.gamelib.enums.StatusJogo;
+import com.bruna.gamelib.exception.JogoJaImportadoException;
 import com.bruna.gamelib.repository.JogoRepository;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +41,7 @@ public class JogoService {
             jogo.setPlataforma(jogoAtualizado.getPlataforma());
             jogo.setStatus(jogoAtualizado.getStatus());
             jogo.setFavorito(jogoAtualizado.getFavorito());
+            jogo.setRawgId(jogoAtualizado.getRawgId());
 
             return jogoRepository.save(jogo);
         });
@@ -55,10 +57,18 @@ public class JogoService {
     }
 
     public Jogo importarJogoDaRawg(Integer rawgId, StatusJogo status, Boolean favorito) throws IOException, InterruptedException {
+        Optional<Jogo> jogoExistente = jogoRepository.findByRawgId(rawgId);
+
+        if (jogoExistente.isPresent()) {
+            throw new JogoJaImportadoException("Este jogo já foi importado para a biblioteca.");
+        }
+
+
         JogoRawgDTO jogoRawg = rawgService.buscarJogoPorId(rawgId);
 
         Jogo jogo = new Jogo();
 
+        jogo.setRawgId(rawgId);
         jogo.setNome(jogoRawg.getNome());
         jogo.setGenero(jogoRawg.getGeneros());
         jogo.setPlataforma(jogoRawg.getPlataformas());
@@ -84,7 +94,7 @@ public class JogoService {
         return jogoRepository.findAll();
     }
 
-        public Optional<Jogo> atualizarStatus(Long id, StatusJogo status) {
+    public Optional<Jogo> atualizarStatus(Long id, StatusJogo status) {
         return jogoRepository.findById(id).map(jogo -> {
             jogo.setStatus(status);
             return jogoRepository.save(jogo);

@@ -10,6 +10,9 @@ public class Jogo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
+    private Integer rawgId;
+
     private String nome;
     private String genero;
     private String plataforma;
@@ -36,6 +39,14 @@ public class Jogo {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Integer getRawgId() {
+        return rawgId;
+    }
+
+    public void setRawgId(Integer rawgId) {
+        this.rawgId = rawgId;
     }
 
     public String getNome() {
