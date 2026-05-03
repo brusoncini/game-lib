@@ -2,17 +2,18 @@ package com.bruna.gamelib.repository;
 
 import com.bruna.gamelib.entity.Jogo;
 import com.bruna.gamelib.enums.StatusJogo;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface JogoRepository extends JpaRepository<Jogo, Long> {
-    List<Jogo> findByStatus(StatusJogo status);
+    Page<Jogo> findByStatus(StatusJogo status, Pageable pageable);
 
-    List<Jogo> findByFavorito(Boolean favorito);
+    Page<Jogo> findByFavorito(Boolean favorito, Pageable pageable);
 
-    List<Jogo> findByStatusAndFavorito(StatusJogo status, Boolean favorito);
+    Page<Jogo> findByStatusAndFavorito(StatusJogo status, Boolean favorito, Pageable pageable);
 
     Optional<Jogo> findByRawgId(Integer rawgId);
 

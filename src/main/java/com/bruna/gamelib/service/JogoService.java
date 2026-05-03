@@ -7,6 +7,8 @@ import com.bruna.gamelib.enums.StatusJogo;
 import com.bruna.gamelib.exception.JogoJaImportadoException;
 import com.bruna.gamelib.exception.NotaInvalidaException;
 import com.bruna.gamelib.repository.JogoRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -80,20 +82,20 @@ public class JogoService {
         return jogoRepository.save(jogo);
     }
 
-    public List<Jogo> filtrarJogos(StatusJogo status, Boolean favorito) {
+    public Page<Jogo> filtrarJogos(StatusJogo status, Boolean favorito, Pageable pageable) {
         if (status != null && favorito != null) {
-            return jogoRepository.findByStatusAndFavorito(status, favorito);
+            return jogoRepository.findByStatusAndFavorito(status, favorito, pageable);
         }
 
         if (status != null) {
-            return jogoRepository.findByStatus(status);
+            return jogoRepository.findByStatus(status, pageable);
         }
 
         if (favorito != null) {
-            return jogoRepository.findByFavorito(favorito);
+            return jogoRepository.findByFavorito(favorito, pageable);
         }
 
-        return jogoRepository.findAll();
+        return jogoRepository.findAll(pageable);
     }
 
     public Optional<Jogo> atualizarStatus(Long id, StatusJogo status) {

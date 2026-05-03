@@ -1,14 +1,17 @@
 package com.bruna.gamelib.controller;
 
 import com.bruna.gamelib.dto.AvaliacaoJogoDTO;
+import com.bruna.gamelib.dto.RespostaPaginaDTO;
 import com.bruna.gamelib.entity.Jogo;
 import com.bruna.gamelib.enums.StatusJogo;
 import com.bruna.gamelib.service.JogoService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/jogos")
@@ -21,18 +24,27 @@ public class JogoController {
     }
 
     @GetMapping
-    public List<Jogo> listarJogos(
+    public RespostaPaginaDTO<Jogo> listarJogos(
             @RequestParam(required = false) StatusJogo status,
-            @RequestParam(required = false) Boolean favorito
+            @RequestParam(required = false) Boolean favorito,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
     ) {
-        return jogoService.filtrarJogos(status, favorito);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Jogo> paginaJogos = jogoService.filtrarJogos(status, favorito, pageable);
+
+        return new RespostaPaginaDTO<>(
+                paginaJogos.getContent(),
+                paginaJogos.getNumber(),
+                paginaJogos.getSize(),
+                paginaJogos.getTotalElements(),
+                paginaJogos.getTotalPages()
+        );
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Jogo> buscarJogoPorId(@PathVariable Long id) {
-        return jogoService.buscarJogoPorId(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return jogoService.buscarJogoPorId(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -41,10 +53,10 @@ public class JogoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Jogo> atualizarJogo(@PathVariable Long id, @RequestBody Jogo jogo) {
-        return jogoService.atualizarJogo(id, jogo)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Jogo> atualizarJogo(
+            @PathVariable Long id,
+            @RequestBody Jogo jogo) {
+        return jogoService.atualizarJogo(id, jogo).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
@@ -75,9 +87,7 @@ public class JogoController {
             @PathVariable Long id,
             @RequestParam StatusJogo status
     ) {
-        return jogoService.atualizarStatus(id, status)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return jogoService.atualizarStatus(id, status).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
     @PatchMapping("/{id}/favorito")
@@ -85,9 +95,7 @@ public class JogoController {
             @PathVariable Long id,
             @RequestParam Boolean favorito
     ) {
-        return jogoService.atualizarFavorito(id, favorito)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return jogoService.atualizarFavorito(id, favorito).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
     @PatchMapping("/{id}/avaliacao")
@@ -95,8 +103,6 @@ public class JogoController {
             @PathVariable Long id,
             @RequestBody AvaliacaoJogoDTO avaliacao
     ) {
-        return jogoService.atualizarAvaliacao(id, avaliacao)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return jogoService.atualizarAvaliacao(id, avaliacao).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 }
